@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <title>Mi Tienda CRUD</title>
+    <style>body { font-family: sans-serif; padding: 20px; }</style>
+</head>
+<body>
+    <h2>Gestión de Productos</h2>
+    <input type="text" id="nombre" placeholder="Nombre del producto">
+    <input type="number" id="precio" placeholder="Precio">
+    <button onclick="crear()">Agregar Producto</button>
+
+    <ul id="lista"></ul>
+
+    <script>
+        async function cargar() {
+            const res = await fetch('/productos');
+            const data = await res.json();
+            const lista = document.getElementById('lista');
+            lista.innerHTML = data.map(p => `
+                <li>${p.nombre} - $${p.precio} 
+                <button onclick="eliminar('${p._id}')">Borrar</button></li>
+            `).join('');
+        }
+
+        async function crear() {
+            const nombre = document.getElementById('nombre').value;
+            const precio = document.getElementById('precio').value;
+            await fetch('/productos', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ nombre, precio })
+            });
+            cargar();
+        }
+
+        async function eliminar(id) {
+            await fetch(`/productos/${id}`, { method: 'DELETE' });
+            cargar();
+        }
+
+        cargar(); // Carga inicial
+    </script>
+</body>
+</html>
