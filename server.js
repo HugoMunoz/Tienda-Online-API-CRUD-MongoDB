@@ -27,6 +27,7 @@ app.use("/clientes", clientesRoutes);
 app.use("/productos", productosRoutes);
 app.use("/proveedores", proveedoresRoutes);
 app.use("/pedidos", pedidosRoutes);
+app.use(express.static('public'));
 
 app.use((err, req, res, next) => {
     console.error(err.stack);

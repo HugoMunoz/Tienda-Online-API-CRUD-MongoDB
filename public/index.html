@@ -1,45 +1,71 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <title>Mi Tienda CRUD</title>
-    <style>body { font-family: sans-serif; padding: 20px; }</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CRUD Tienda Online</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
 </head>
-<body>
-    <h2>Gestión de Productos</h2>
-    <input type="text" id="nombre" placeholder="Nombre del producto">
-    <input type="number" id="precio" placeholder="Precio">
-    <button onclick="crear()">Agregar Producto</button>
+<body class="bg-light">
 
-    <ul id="lista"></ul>
+    <div class="container py-5">
+        <header class="text-center mb-5">
+            <h1 class="display-5 fw-bold text-primary">Panel de Inventario</h1>
+            <p class="lead">Conexión directa con MongoDB Atlas y MongoDB Compass</p>
+        </header>
 
-    <script>
-        async function cargar() {
-            const res = await fetch('/productos');
-            const data = await res.json();
-            const lista = document.getElementById('lista');
-            lista.innerHTML = data.map(p => `
-                <li>${p.nombre} - $${p.precio} 
-                <button onclick="eliminar('${p._id}')">Borrar</button></li>
-            `).join('');
-        }
+        <div class="row">
+            <div class="col-lg-4">
+                <div class="card shadow border-0">
+                    <div class="card-body">
+                        <h4 id="form-title" class="card-title mb-4">Agregar Producto</h4>
+                        <form id="crud-form">
+                            <input type="hidden" id="prod-id"> <div class="mb-3">
+                                <label class="form-label">Nombre del Producto</label>
+                                <input type="text" id="nombre" class="form-control" required placeholder="Ej: Monitor Gamer">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Precio ($)</label>
+                                <input type="number" id="precio" class="form-control" required placeholder="0.00">
+                            </div>
+                            <div class="d-grid gap-2">
+                                <button type="submit" id="btn-submit" class="btn btn-success">Guardar en Atlas</button>
+                                <button type="button" id="btn-cancel" class="btn btn-secondary d-none" onclick="resetForm()">Cancelar</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
 
-        async function crear() {
-            const nombre = document.getElementById('nombre').value;
-            const precio = document.getElementById('precio').value;
-            await fetch('/productos', {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({ nombre, precio })
-            });
-            cargar();
-        }
+            <div class="col-lg-8">
+                <div class="card shadow border-0">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h4>Productos en Stock</h4>
+                            <button onclick="fetchData()" class="btn btn-outline-primary btn-sm">🔄 Refrescar</button>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Producto</th>
+                                        <th>Precio</th>
+                                        <th>Stock</th>
+                                        <th>Categoría</th>
+                                        <th class="text-center">Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="data-table">
+                                    </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
-        async function eliminar(id) {
-            await fetch(`/productos/${id}`, { method: 'DELETE' });
-            cargar();
-        }
-
-        cargar(); // Carga inicial
-    </script>
+    <script src="script.js"></script>
 </body>
 </html>
