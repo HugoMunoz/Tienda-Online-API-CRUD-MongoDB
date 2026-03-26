@@ -7,5 +7,5 @@ const ProductoSchema = new mongoose.Schema({
   categoría: { type: String, default: 'General' }
 });
 
-const Producto = mongoose.model('Producto', ProductoSchema);
-//module.exports = mongoose.models.Producto || mongoose.model('Producto', ProductoSchema);
+//const Producto = mongoose.model('Producto', ProductoSchema);
+module.exports = mongoose.models.Producto || mongoose.model('Producto', ProductoSchema);
