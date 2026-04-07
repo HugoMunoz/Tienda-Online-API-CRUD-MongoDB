@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,31 +8,182 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
+
 <body class="bg-light">
 
     <div class="container py-5">
         <header class="text-center mb-5">
             <h1 class="display-5 fw-bold text-primary">Panel de Inventario</h1>
-            <p class="lead">Conexión directa con MongoDB Atlas y MongoDB Compass</p>
+            <p class="lead">Gestión de base de datos en MongoDB Atlas y MongoDB Compass</p>
         </header>
 
+        <ul class="nav nav-pills justify-content-center mb-4" id="pills-tab" role="tablist">
+            <li class="nav-item">
+                <button class="nav-link active" onclick="switchTab('productos')">Gestión de Productos</button>
+            </li>
+            <li class="nav-item">
+                <button class="nav-link" onclick="switchTab('clientes')">Gestión de Clientes</button>
+            </li>
+            <li class="nav-item">
+                <button class="nav-link" onclick="switchTab('pedidos')">Gestión de Pedidos</button>
+            </li>
+        </ul>
+
+            <div id="section-productos">
+                <div class="row">
+                    <div class="col-lg-4">
+                        <div class="card shadow border-0">
+                            <div class="card-body">
+                                <h4 id="form-title" class="card-title mb-4">Agregar Producto</h4>
+                                <form id="crud-form">
+                                    <input type="hidden" id="prod-id">
+                                    <div class="mb-3">
+                                        <label class="form-label">Nombre del Producto</label>
+                                        <input type="text" id="nombre" class="form-control" required
+                                            placeholder="Ej: Monitor Gamer">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Precio ($)</label>
+                                        <input type="number" id="precio" class="form-control" required
+                                            placeholder="0.00">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Stock</label>
+                                        <input type="number" id="stock" class="form-control" required
+                                            placeholder="Cantidad disponible">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Categoría</label>
+                                        <select id="categoria" class="form-select" required>
+                                            <option value="" selected disabled>Selecciona una categoría</option>
+                                            <option value="General">General</option>
+                                            <option value="Electrónica">Electrónica</option>
+                                            <option value="Hogar">Hogar</option>
+                                        </select>
+                                    </div>
+                                    <div class="d-grid gap-2">
+                                        <button type="submit" id="btn-submit" class="btn btn-success">Guardar en
+                                            Atlas</button>
+                                        <button type="button" id="btn-cancel" class="btn btn-secondary d-none"
+                                            onclick="resetForm()">Cancelar</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-8">
+                        <div class="card shadow border-0">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                    <h4 class="card-title">Productos en Stock</h4>
+                                    <button onclick="fetchData()" class="btn btn-outline-primary btn-sm">🔄
+                                        Refrescar</button>
+                                </div>
+                                <div class="table-responsive">
+                                    <table class="table table-hover">
+                                        <thead class="table-light">
+                                            <tr>
+                                                <th>Producto</th>
+                                                <th>Precio</th>
+                                                <th>Stock</th>
+                                                <th>Categoría</th>
+                                                <th class="text-center">Acciones</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="data-table"></tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="section-clientes" class="d-none">
+                <div class="row">
+                    <div class="col-lg-4">
+                        <div class="card shadow border-0">
+                            <div class="card-body">
+                                <h4 id="form-title-cli" class="card-title mb-4">Agregar Cliente</h4>
+                                <form id="cliente-form">
+                                    <input type="hidden" id="cliente-id">
+                                    <div class="mb-3">
+                                        <label class="form-label">Nombre</label>
+                                        <input type="text" id="cliente-nombre" class="form-control" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Correo</label>
+                                        <input type="email" id="cliente-correo" class="form-control" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Ciudad</label>
+                                        <input type="text" id="cliente-ciudad" class="form-control">
+                                    </div>
+                                    <div class="d-grid gap-2">
+                                        <button type="submit" id="btn-submit-cliente" class="btn btn-primary">Guardar
+                                            Cliente</button>
+                                        <button type="button" id="id-btn-cliente-cancel"
+                                            class="btn btn-secondary d-none"
+                                            onclick="resetClientForm()">Cancelar</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-8">
+                        <div class="card shadow border-0">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                    <h4 class="card-title mb-3">Lista de Clientes</h4>
+                                    <button onclick="fetchClientes()" class="btn btn-outline-primary btn-sm">
+                                        🔄 Refrescar
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th>Nombre</th>
+                                            <th>Correo</th>
+                                            <th>Ciudad</th>
+                                            <th>Acciones</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="data-table-clientes"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+    </div>
+
+    <div id="section-pedidos" class="d-none">
         <div class="row">
             <div class="col-lg-4">
                 <div class="card shadow border-0">
                     <div class="card-body">
-                        <h4 id="form-title" class="card-title mb-4">Agregar Producto</h4>
-                        <form id="crud-form">
-                            <input type="hidden" id="prod-id"> <div class="mb-3">
-                                <label class="form-label">Nombre del Producto</label>
-                                <input type="text" id="nombre" class="form-control" required placeholder="Ej: Monitor Gamer">
-                            </div>
+                        <h4 id="form-title-ped" class="card-title mb-4">Nuevo Pedido</h4>
+                        <form id="pedido-form">
+                            <input type="hidden" id="pedido-id">
+
                             <div class="mb-3">
-                                <label class="form-label">Precio ($)</label>
-                                <input type="number" id="precio" class="form-control" required placeholder="0.00">
+                                <label class="form-label">Nombre del Cliente</label>
+                                <input type="text" id="pedido-cliente" class="form-control" required>
                             </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">Total ($)</label>
+                                <input type="number" id="pedido-total" class="form-control" required>
+                            </div>
+
                             <div class="d-grid gap-2">
-                                <button type="submit" id="btn-submit" class="btn btn-success">Guardar en Atlas</button>
-                                <button type="button" id="btn-cancel" class="btn btn-secondary d-none" onclick="resetForm()">Cancelar</button>
+                                <button type="submit" id="btn-submit-pedido" class="btn btn-success">Guardar
+                                    Pedido</button>
+                                <button type="button" id="btn-pedido-cancel" class="btn btn-secondary d-none"
+                                    onclick="resetPedidoForm()">Cancelar</button>
                             </div>
                         </form>
                     </div>
@@ -42,22 +194,20 @@
                 <div class="card shadow border-0">
                     <div class="card-body">
                         <div class="d-flex justify-content-between align-items-center mb-3">
-                            <h4>Productos en Stock</h4>
-                            <button onclick="fetchData()" class="btn btn-outline-primary btn-sm">🔄 Refrescar</button>
+                            <h4 class="card-title mb-4">Historial de Pedidos</h4>
+                            <button onclick="fetchPedidos()" class="btn btn-outline-primary btn-sm">🔄
+                                Refrescar</button>
                         </div>
                         <div class="table-responsive">
                             <table class="table table-hover">
                                 <thead class="table-light">
                                     <tr>
-                                        <th>Producto</th>
-                                        <th>Precio</th>
-                                        <th>Stock</th>
-                                        <th>Categoría</th>
-                                        <th class="text-center">Acciones</th>
+                                        <th>Cliente</th>
+                                        <th>Total</th>
+                                        <th>Acciones</th>
                                     </tr>
                                 </thead>
-                                <tbody id="data-table">
-                                    </tbody>
+                                <tbody id="data-table-pedidos">
                             </table>
                         </div>
                     </div>
@@ -66,6 +216,9 @@
         </div>
     </div>
 
+    </div>
+
     <script src="script.js"></script>
 </body>
+
 </html>
